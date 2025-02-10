@@ -1,0 +1,12 @@
+{
+  "school": {
+    "listSelect": "/admin/school/list/?",
+    "searchSchool": "/admin/school/detail/?",
+    "isAdmin": "/admin/school/detail/?",
+    "noAdmin": "/upload/?",
+    "uploadFile": "/upload/",
+    "DelFile": "/upload/",
+    "downloadUrl": "/upload/",
+    "getSchoolFileInfo": "/admin/school/check/?format=json"
+  }
+}
