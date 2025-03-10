@@ -1,20 +1,34 @@
-"use client";
-import React from "react";
-import Sidebar from "../components/Sidebar";
-import MainContent from "../components/MainContent";
+import { useContext } from "react";
+import TabSection from "../components/TabSection";
+import WelcomeMessage from "../components/WelcomeMessage";
+import MenuContext from "../components/store/Menu-Context";
+import Cards from "../components/Cards";
+import DataSynchronization from "../components/DataSynchronization";
+import PowerControl from "../components/PowerControl";
 
 const Dashboard: React.FC = () => {
+  const menu = useContext(MenuContext);
+  const { selectedItem } = menu;
+
+  function ReturnInfo() {
+    if (selectedItem == null) {
+      return <WelcomeMessage />;
+    } else if (selectedItem == "資料同步") {
+      return <DataSynchronization />;
+    } else if (selectedItem == "開關機控制") {
+      return <PowerControl />;
+    } else {
+      return <Cards />;
+    }
+  }
+
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-      />
-      <main className="flex min-h-screen bg-slate-950 max-sm:flex-col">
-        <Sidebar />
-        <MainContent />
-      </main>
-    </>
+    <main className="flex flex-col  bg-slate-950 max-sm:flex-col w-full pt-40">
+      <section className="flex flex-col px-20 ">
+        <TabSection title={selectedItem ? selectedItem : "歡迎使用"} />
+        {ReturnInfo()}
+      </section>
+    </main>
   );
 };
 

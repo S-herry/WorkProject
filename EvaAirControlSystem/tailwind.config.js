@@ -5,6 +5,8 @@ export default {
     extend: {
       colors: {
         MineBgColor: "#001321",
+        ButtonShutdown: "#FF6666",
+        PowerOn: "#009844",
       },
     },
   },

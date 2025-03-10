@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import Input from "./auth/Input";
-import Button from "./common/Button";
+import Input from "../auth/Input";
+import Button from "../common/Button";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -52,7 +54,11 @@ const LoginForm: React.FC = () => {
         </div>
       </div>
       <div className="text-end">
-        <Button type="submit" color="bg-green-600">
+        <Button
+          type="submit"
+          color="bg-green-600"
+          onClick={() => navigate("/")}
+        >
           管理員登入
         </Button>
       </div>

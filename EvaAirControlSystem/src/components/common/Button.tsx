@@ -2,14 +2,31 @@ interface ButtonProps {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   color?: string;
-  type?: string;
+  type?: "button" | "submit" | "reset";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
 }
-const Button = ({ color, children, onClick }: ButtonProps) => {
+
+const Button = ({
+  color = "bg-blue-500",
+  children,
+  type = "button",
+  size = "lg",
+  disabled = false,
+  onClick,
+}: ButtonProps) => {
+  const sizeClasses = {
+    sm: "px-4 py-2 text-sm",
+    md: "px-6 py-3 text-base",
+    lg: "px-8 py-4 text-lg",
+  };
+
   return (
     <button
-      type="button"
-      className={`self-end px-8 mt-12 text-xl font-semibold text-center text-white whitespace-nowrap rounded-md shadow-lg py-4 ${color}`}
+      type={type}
+      className={`font-semibold text-white rounded-md shadow-lg ${color} ${sizeClasses[size]}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
