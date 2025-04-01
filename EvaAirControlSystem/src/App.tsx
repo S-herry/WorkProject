@@ -1,30 +1,63 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import RootLayout from "./pages/layout/RootLayout";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  redirect,
+} from "react-router-dom";
+import RootLayout, { LoginState } from "./pages/layout/RootLayout"; // loginState
 import RootErrorPages from "./pages/errorPages/RootErrorPages";
-import Login from "./pages/Login";
+import Login, { Action } from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import MachineContent, {
+  Loader,
+  Action as machineAction,
+} from "./pages/MachineContent";
+import MachineProvider from "./components/store/MachineProvider";
+import UserPhoto, { Action as PhotoAction } from "./pages/UserPhoto";
+
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <RootLayout />,
+      element: (
+        <MachineProvider>
+          <RootLayout />
+        </MachineProvider>
+      ),
       errorElement: <RootErrorPages />,
+      // loader: LoginState,
       children: [
         {
-          path: "",
+          path: "/",
           element: <Dashboard />,
+        },
+        {
+          path: "/machine_control/:id",
+          element: <MachineContent />,
+          loader: Loader,
+          action: machineAction,
         },
       ],
     },
     {
+      path: "/get_image/:id",
+      element: <UserPhoto />,
+      action: PhotoAction,
+    },
+    {
       path: "/login",
+      element: (
+        <MachineProvider>
+          <Login />
+        </MachineProvider>
+      ),
+      action: Action,
       errorElement: <RootErrorPages />,
-      children: [
-        {
-          path: "",
-          element: <Login />,
-        },
-      ],
+    },
+    {
+      path: "/logout",
+      loader: () => {
+        return redirect("/login");
+      },
     },
   ]);
 

@@ -1,4 +1,5 @@
 export interface MachineStatus {
+  id?: string | number;
   isPoweredOn: boolean;
   machineName: string;
 }

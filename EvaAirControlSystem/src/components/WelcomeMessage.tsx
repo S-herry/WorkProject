@@ -1,13 +1,16 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const WelcomeMessage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
-    <article className="text-3xl leading-normal text-stone-300 max-md:text-2xl max-sm:text-2xl">
-      <span>歡迎使用安全教育中心!</span>
+    <article className="lg:text-2xl leading-normal text-stone-300 md:text-2xl sm:text-xl">
+      <span>{t("WelcomeContent.WelcomeMessage")}</span>
       <br />
-      <span>內容管理儀表板，</span>
+      <span>{t("WelcomeContent.DashboardTitle")}</span>
       <br />
-      <span>請點選左側設備列表查看詳情。</span>
+      <span>{t("WelcomeContent.SelectDevicePrompt")}</span>
     </article>
   );
 };

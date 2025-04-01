@@ -13,6 +13,12 @@ export default defineConfig({
     outDir: "build",
     manifest: true,
     // ssrManifest: true,  // 取得每個資源預載指令
+    terserOptions: {
+      compress: {
+        drop_console: false, // 不移除 console.log
+        drop_debugger: false, // 不移除 debugger
+      },
+    },
     rollupOptions: {
       output: {
         entryFileNames: "assets/js/[name].js",
