@@ -1,2 +1,3 @@
-# WorkProject
-銀展創意工作專案
+# Project
+
+setting 基本都在里內的README.md
