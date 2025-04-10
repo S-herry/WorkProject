@@ -169,7 +169,7 @@ const Index = () => {
       )}
       {connPage === 1 && (
         <CatchFish
-          handleChangeStartReeling={handleChangeStartReeling}
+          handleChangeStartReeling={OnClickDevicemotion}
           onChangePage={() => {
             handleChangeStartReeling(false);
             handleChangePage();

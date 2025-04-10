@@ -2,13 +2,14 @@ import HitTitle from "./HitTitle";
 import HintSpring from "./Animated/Spring/HintSpring";
 import { useSelector } from "react-redux";
 
-const FishingRodStep1 = () => {
+const FishingRodStep1 = ({ handleChangeStartReeling }) => {
   const { language } = useSelector((state) => state.connState);
 
   const { 請甩動釣竿, 甩動手機拋出魚竿 } = language;
 
   return (
     <>
+      <button onClick={handleChangeStartReeling}>甩竿</button>
       <HitTitle title={請甩動釣竿} />
       <HintSpring>{甩動手機拋出魚竿}</HintSpring>
     </>

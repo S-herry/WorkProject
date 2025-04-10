@@ -1,5 +1,6 @@
+import React, { useCallback, useEffect, useState } from "react";
 import StatusHeader from "../components/machine/StatusHeader";
-import { CardItem } from "../components/store/machineType";
+import { CardItem, Stage } from "../components/store/machineType";
 import DateGroup from "../components/machine/DateGroup";
 import url from "../assets/data/url.json";
 import {
@@ -9,7 +10,6 @@ import {
   useParams,
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchInformationCard, queryClient } from "../util/http";
 
@@ -17,28 +17,48 @@ const MachineContent = () => {
   const initialCard: CardItem = useLoaderData();
   const { id } = useParams();
   const { t } = useTranslation();
-  const [path, setPath] = useState("");
-
-  useEffect(() => {
-    if (id) {
-      const test = url.test ? url.host : "";
-      setPath(test + url.information.all.replace("{id}", id));
-    }
-  }, [id]);
+  const [machine, setMachine] = useState(initialCard);
+  const [status, setStatus] = useState(initialCard.status);
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["InformationCard", id],
     queryFn: async ({ signal }) => {
-      if (!path) return initialCard;
-      const result = await fetchInformationCard({ url: path, signal });
-      return result;
+      const host = url.test === true ? url.host : "";
+      const path = host + url.information.all.replace("{id}", `${id}`);
+      if (!path) throw new Error("Missing path");
+      return fetchInformationCard({ url: path, signal });
     },
-    enabled: !!path,
-    gcTime: 1000,
-    refetchInterval: 1000,
+    enabled: status === "online",
+    refetchInterval: 5000,
     initialData: initialCard,
+    refetchOnWindowFocus: true, // 當頁面再次聚焦 會重新請求
   });
 
+  useEffect(() => {
+    if (data) {
+      setMachine(data);
+      setStatus(data.status);
+    }
+  }, [data]);
+
+  const SetCurrent_stage = useCallback(
+    ({ id, room, category, data }: Stage) => {
+      if (status !== "online") return;
+      setMachine((prev) => {
+        return {
+          ...prev,
+          current_stage: {
+            ...prev.current_stage,
+            id: id,
+            room: room,
+            data: data,
+            category: category,
+          },
+        };
+      });
+    },
+    [status]
+  );
   if (isPending) {
     return (
       <section className="bg-[#202020] rounded-lg w-full relative p-5">
@@ -58,20 +78,22 @@ const MachineContent = () => {
   return (
     <section className="bg-[#202020] rounded-lg w-full relative p-5">
       <StatusHeader
-        machineNumber={t(data?.json_key) ?? null}
-        status={data?.status === "online"}
+        machineNumber={t(machine?.json_key) ?? null}
+        status={machine?.status === "online"}
       />
       <hr className="flex shrink-0 mt-10 max-w-full h-px bg-white max-md:mt-10" />
       <div className="flex flex-col text-white mt-5 gap-5 relative">
-        {data?.json_filed &&
-          Object.keys(data.json_filed).map((key, index) => (
+        {machine?.json_filed &&
+          typeof machine.json_filed === "object" &&
+          Object.keys(machine.json_filed).map((key, index) => (
             <React.Fragment key={`${key}_${index}`}>
-              {data.json_filed[key]?.menus && (
+              {machine.json_filed[key]?.menus && (
                 <DateGroup
                   title={key}
-                  subItems={data.json_filed[key]}
-                  json_key={data.json_key}
-                  current_stage={data.current_stage}
+                  subItems={machine.json_filed[key]}
+                  json_key={machine.json_key}
+                  current_stage={machine.current_stage}
+                  SetCurrent_stage={SetCurrent_stage}
                 />
               )}
             </React.Fragment>
@@ -84,7 +106,7 @@ const MachineContent = () => {
 export default MachineContent;
 
 export async function Loader({ params }: LoaderFunctionArgs) {
-  if (!params.id) return null;
+  if (!params.id) return { json_key: "", status: "", json_filed: {} };
   const path =
     (url.test ? url.host : "") + url.information.all.replace("{id}", params.id);
   return queryClient.fetchQuery({
@@ -101,11 +123,11 @@ export async function Action({ request }: ActionFunctionArgs) {
     category: data.get("category"),
     menu: data.get("menu"),
     data: data.get("data"),
-    id: data.get("dataId"),
+    id: data.get("id"),
     video: data.get("video"),
+    volume: data.get("volume"),
   };
-  console.log(room);
-
+  console.log(`資料送入後端: ${JSON.stringify(room)}`);
   try {
     const response = await fetch(path, {
       method: "POST",
@@ -114,11 +136,13 @@ export async function Action({ request }: ActionFunctionArgs) {
     });
 
     if (!response.ok) {
-      throw new Error("錯誤");
+      const errorText = await response.text();
+      throw new Error(`錯誤: ${errorText}`);
     }
+
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error("發生錯誤:", error);
     throw error;
   }
 }

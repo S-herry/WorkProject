@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MachineContext from "./Machine-Context";
 import { Json_filed } from "./machineType";
 import { useTranslation } from "react-i18next";
@@ -16,10 +16,6 @@ const MachineProvider = ({ children }: { children: React.ReactNode }) => {
     setLanguage(lg);
     i18n.changeLanguage(lg);
   }
-
-  useEffect(() => {
-    console.log(`目前語言:${language == "tw" ? "中文" : "英文"} `);
-  }, [language]);
 
   return (
     <MachineContext.Provider

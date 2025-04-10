@@ -5,18 +5,21 @@ export interface Information {
   signal?: AbortSignal;
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1, // 失敗時最多重試 1 次
+      refetchOnWindowFocus: false, // 切換回視窗時不自動重新請求
+    },
+  },
+});
 
 export async function fetchInformationCard({ url, signal }: Information) {
-  try {
-    const response = await fetch(url, { signal });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    return null; // 確保返回一個有效值
+  const response = await fetch(url, { signal });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+
+  return response.json();
 }

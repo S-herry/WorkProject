@@ -12,8 +12,8 @@ const Login = () => {
   useEffect(() => {
     async function getInitToken() {
       try {
-        const test = url.test ? url.host : "";
-        const path = test + url.port.getToken;
+        const host = url.test ? url.host : "";
+        const path = host + url.port.getToken;
         const res = await fetch(path, {
           credentials: "include", // 重要：確保請求攜帶 Cookie
         });
@@ -54,8 +54,8 @@ export const Action: ActionFunction = async ({ request }) => {
     password: data.get("password"),
   };
 
-  const test = url.test ? url.host : "";
-  const loginUrl = test + url.port.login;
+  const host = url.test ? url.host : "";
+  const loginUrl = host + url.port.login;
   const res = await fetch(loginUrl, {
     method: "POST",
     credentials: "include",

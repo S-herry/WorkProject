@@ -9,7 +9,7 @@ module.exports = (env, argv) => {
     mode: isProduction ? "production" : "development",
     entry: "./src/main.jsx",
     output: {
-      filename: "js/main.js",
+      filename: "js/main-[contenthash].js",
       path: path.resolve(__dirname, "./build"),
       clean: true,
       chunkFilename: "js/main.js",
@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new webpack.optimize.LimitChunkCountPlugin({
-        maxChunks: 1, // 強制所有模組合併到一個檔案中
+        maxChunks: 1,
       }),
       new HtmlWebpackPlugin({
         template: "./index.html",

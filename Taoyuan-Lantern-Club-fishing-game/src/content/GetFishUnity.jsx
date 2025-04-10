@@ -4,6 +4,8 @@ import React, {
   useState,
   useCallback,
   memo,
+  useMemo,
+  useRef,
 } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useSelector } from "react-redux";
@@ -11,7 +13,7 @@ import usePostFetch from "../../hook/usePostFetch";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import useAudioManager from "../../hook/useAudioManager";
 // http://192.168.0.8
-const postUrl = "https://websocket.golden-slash.com/web/api";
+const postUrl = "https://lanterngo.com/web/api";
 
 export const UnityContext = createContext({
   UnityCallMessage: (function_name, parameter) => {},
@@ -32,27 +34,54 @@ export const UnityContext = createContext({
 });
 
 const url = "/static/animations";
-let GoOnline = true;
-const GetFishUnity = memo(function GetFishUnity({ children }) {
+let GoOnline = false;
+const GetFishUnity = React.memo(({ children }) => {
   const [_, setMaterial] = usePostFetch(null);
   const [nowAllData, setNowAllData] = useState({});
   const [showButton, setShowButton] = useState(false);
   const [isDataReady, setIsDataReady] = useState(false);
   const [SwingTheRodStep, setSwingTheRodStep] = useState(1);
   const { device } = useSelector((state) => state.connState);
+  const [shouldCloseScreen, setShouldCloseScreen] = useState(false);
+  const id = useRef();
 
   useEffect(() => {
-    const isIEOrEdge = () => {
-      const ua = window.navigator.userAgent;
-      return /MSIE|Trident|Edg|Edge/.test(ua);
-    };
+    const interval = setInterval(() => {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+      // (minutes >= 22 && minutes < 25) || (minutes === 25 && seconds <= 0);
+      // (minutes >= 52 && minutes < 55) || (minutes === 55 && seconds <= 0);
 
-    if (isIEOrEdge()) {
-      console.log("This is Internet Explorer or Edge.");
-    } else {
-      console.log("This is not Internet Explorer or Edge.");
-    }
+      const inHoursRange = hours == 18 || hours == 19 || hours == 20;
+      const inMinutesRange =
+        (minutes >= 22 && minutes < 25) || (minutes >= 52 && minutes < 55);
+
+      const onlyOpen = hours == 21 && minutes >= 22 && minutes < 25;
+
+      if ((inHoursRange && inMinutesRange) || onlyOpen) {
+        setShouldCloseScreen(false);
+      } else {
+        setShouldCloseScreen(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval); // 清除定時器
   }, []);
+
+  // useEffect(() => {
+  //   const isIEOrEdge = () => {
+  //     const ua = window.navigator.userAgent;
+  //     return /MSIE|Trident|Edg|Edge/.test(ua);
+  //   };
+
+  //   if (isIEOrEdge()) {
+  //     console.log("This is Internet Explorer or Edge.");
+  //   } else {
+  //     console.log("This is not Internet Explorer or Edge.");
+  //   }
+  // }, []);
 
   const {
     unityProvider,
@@ -76,19 +105,26 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
     },
   });
 
-  // useEffect(() => {
-  //   if (!GoOnline) {
-  //     if (isLoaded && loadingProgression === 1) {
-  //       const timeout = setTimeout(() => {
-  //         setIsDataReady(true);
-  //       }, 1000);
-  //       return () => clearTimeout(timeout);
-  //     }
-  //   }
-  // }, [isLoaded, loadingProgression]);
+  useEffect(() => {
+    if (!GoOnline) {
+      if (isLoaded && loadingProgression === 1) {
+        const timeout = setTimeout(() => {
+          setIsDataReady(true);
+          goFullscreen();
+          const nows = new Date();
+          id.current = nows.getTime();
+        }, 1000);
+        return () => clearTimeout(timeout);
+      }
+    }
+  }, [isLoaded, loadingProgression]);
 
   const handleOnAdEnd = () => {
+    goFullscreen();
     setIsDataReady(true);
+
+    const nows = new Date();
+    id.current = nows.getTime();
   };
 
   const UnityCallMessage = (function_name, parameter) => {
@@ -112,17 +148,18 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
 
   const handleFetchData = (behavior, data) => {
     const nowData = new Date();
-    if (GoOnline) {
-      setMaterial({
-        url: postUrl,
-        data: {
-          source: device,
-          behavior: behavior,
-          timestamp: nowData.getTime(),
-          other: data,
+    setMaterial({
+      url: postUrl,
+      data: {
+        source: device,
+        behavior: behavior,
+        timestamp: nowData.getTime(),
+        other: {
+          id: id.current,
+          ...data,
         },
-      });
-    }
+      },
+    });
   };
 
   const OnChangFishColor = () => {
@@ -130,12 +167,12 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
   };
 
   const ResetAll = () => {
-    setShowButton(false);
+    setNowAllData({});
     UnityCallResult_CanvasMessage("ResetAnim");
     UnityCallMessage("ResetAnim");
-    setNowAllData({});
-    handleSwingTheRodStep(1);
+    setShowButton(false);
     scaleToCenter();
+    handleSwingTheRodStep(1);
   };
 
   const useEventListener = (eventName, handler) => {
@@ -177,11 +214,16 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
     };
   }, []);
 
-  const { refs: audioRefs, musicLoaded } = useAudioManager([
-    { src: "/static/mp3/ButtonClick.mp3", loop: false },
-    { src: "/static/mp3/FishingRodWhipInAir.mp3", loop: false },
-    { src: "/static/mp3/FishingRodReelSpin.mp3", loop: true },
-  ]);
+  const audioConfigs = useMemo(
+    () => [
+      { src: "/static/mp3/ButtonClick.mp3", loop: false },
+      { src: "/static/mp3/FishingRodWhipInAir.mp3", loop: false },
+      { src: "/static/mp3/FishingRodReelSpin.mp3", loop: true },
+    ],
+    []
+  );
+
+  const { refs: audioRefs, musicLoaded } = useAudioManager(audioConfigs);
 
   // 按鈕音效
   const handleButtonClick = useCallback(() => {
@@ -223,18 +265,38 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
   function handleSwingTheRodStep(int) {
     setSwingTheRodStep(int);
   }
+  const ProgressBarComponents = memo(({ progress }) => (
+    <ProgressBar
+      animated
+      variant="warning"
+      now={progress}
+      style={{ width: "75%" }}
+    />
+  ));
 
+  useEffect(() => {
+    if ("caches" in window) {
+      caches.keys().then((cacheNames) => {
+        cacheNames.forEach((cacheName) => caches.delete(cacheName));
+      });
+    }
+  }, []);
+
+  function goFullscreen() {
+    const canvas = document.getElementById("react-unity-webgl-canvas-1");
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+  }
   return (
-    <>
+    <div
+      style={{
+        position: "relative",
+      }}
+    >
       {(!isDataReady || !musicLoaded) && (
         <div className="unity-loading d-flex  flex-column justify-content-center align-items-center w-100 vh-100">
           <img src="/static/loading.gif" alt="" />
-          <ProgressBar
-            animated
-            variant="warning"
-            now={loadingProgression * 100}
-            style={{ width: "75%" }}
-          />
+          <ProgressBarComponents progress={loadingProgression * 100} />
         </div>
       )}
       <Unity
@@ -270,7 +332,22 @@ const GetFishUnity = memo(function GetFishUnity({ children }) {
       >
         {isDataReady && musicLoaded && children}
       </UnityContext.Provider>
-    </>
+      {!shouldCloseScreen && isDataReady && musicLoaded && (
+        <div
+          className="bg-black w-100 vh-100 darkText text-center d-flex flex-column justify-content-center align-items-center"
+          style={{
+            position: "absolute",
+            top: 0,
+            zIndex: 20,
+          }}
+        >
+          <h3 className=" text-white">請抬頭觀賞主題燈展演</h3>
+          <h5 className=" text-white">
+            Please look up and enjoy the lantern show
+          </h5>
+        </div>
+      )}
+    </div>
   );
 });
 

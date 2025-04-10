@@ -89,8 +89,8 @@ const GetFish = ({ onChangePage }) => {
               show={resetBtn}
               onClick={() => {
                 setResetBtn(false);
-                ResetAll();
                 onChangePage(1);
+                ResetAll();
               }}
               style={{
                 margin: nation != "CH" ? "-10px" : "0",

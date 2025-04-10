@@ -14,9 +14,9 @@ export interface Stage {
   room: string;
   category: string;
   id: number;
-  menu: string;
   data: string;
-  video: string;
+  menu?: string;
+  video?: string;
 }
 
 export interface Json_filed {
@@ -27,7 +27,7 @@ export interface Json_Menus {
   menus: MenusItem[];
 }
 export interface MenusItem {
-  id: string | number;
+  id: number;
   title_tw: string;
   title_en: string;
   type?: string;

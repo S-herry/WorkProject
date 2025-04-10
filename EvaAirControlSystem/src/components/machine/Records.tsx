@@ -4,10 +4,10 @@ import { memo } from "react";
 import Image from "../common/Image";
 interface RecordsProps {
   records?: MenusItem[];
-  id: string | number;
+  id: number;
   category: string;
   current_stage?: Stage;
-  handleSubmit: (id: string | number, control: number | string) => void;
+  handleSubmit: (id: number, control: string) => void;
   language: string;
 }
 const Records = memo(function Records({
@@ -35,7 +35,7 @@ const Records = memo(function Records({
                 { "bg-[#10cf7a] text-black": isCurrentRecord },
                 { "bg-[#6A6A6A] text-white": !isCurrentRecord }
               )}
-              onClick={() => handleSubmit(id, item.id)}
+              onClick={() => handleSubmit(id, `${item.id}`)}
             >
               {isCurrentRecord && (
                 <Image

@@ -1,4 +1,4 @@
-import { useContext, lazy } from "react";
+import { useContext, lazy, useRef } from "react";
 import phone from "../assets/main/phone.png";
 import rotate from "../assets/main/rotate.png";
 import HitTitle from "../components/HitTitle";
@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import { useSelector } from "react-redux";
 import { UnityContext } from "../content/GetFishUnity";
 import ImageLoading from "../components/Loading/ImageLoading";
+
 const Illustrate = ({ onChangePage }) => {
   const ImageBlockComponent = lazy(() => import("../components/ImageBlock"));
 

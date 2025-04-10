@@ -11,6 +11,7 @@ const FishingRodStep2 = ({
 }) => {
   const { language } = useSelector((state) => state.connState);
   const { 加油快上鉤了 } = language;
+
   return (
     <>
       <div className="d-flex align-items-center justify-content-center">

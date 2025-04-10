@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 interface StateDisplayProps {
   state: string;
@@ -14,4 +14,4 @@ const StateDisplay: React.FC<StateDisplayProps> = ({ state }) => {
   );
 };
 
-export default StateDisplay;
+export default memo(StateDisplay);

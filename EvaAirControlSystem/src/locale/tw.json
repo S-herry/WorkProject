@@ -23,8 +23,10 @@
     "Administrator": "管理員",
     "PowerStatus": "電力狀態",
     "Off": "關閉",
+    "On": "開啟",
     "OneClickPowerOn": "一鍵開啟",
-    "OneClickPowerOff": "一鍵關閉"
+    "OneClickPowerOff": "一鍵關閉",
+    "volume": "音量控制"
   },
   "SafetyEducationCenter": "安全教育中心",
   "Dashboard": "內容管理儀表板",

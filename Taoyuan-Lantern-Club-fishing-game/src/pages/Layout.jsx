@@ -51,9 +51,9 @@ function Layout() {
         languageSelectBox={languageSelectBox}
         onClick={handleChooseLang}
       />
-      {permissionGranted && <Outlet />}
+      <Outlet />
 
-      {!permissionGranted && (
+      {/* {!permissionGranted && (
         <div
           className="text-center d-flex flex-column justify-content-center"
           style={{
@@ -64,7 +64,7 @@ function Layout() {
         >
           <h3>{沒有陀螺儀權限請至設定開啟}</h3>
         </div>
-      )}
+      )} */}
     </>
   );
 }

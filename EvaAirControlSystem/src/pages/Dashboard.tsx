@@ -1,28 +1,32 @@
-import { useContext, memo } from "react";
+import { useContext, memo, useMemo } from "react";
 import MenuContext from "../components/store/Menu-Context";
 import Cards from "../components/Cards";
 import PowerControl from "../components/PowerControl";
 import WelcomeMessage from "../components/WelcomeMessage";
 
-const ReturnInfo = memo(({ id }: { id: string | number | null }) => {
-  if (id == null) {
-    return <WelcomeMessage />;
-  } else if (id == 9999) {
-    return <PowerControl />;
-  } else {
-    return <Cards id={id} />;
-  }
-});
-
 const Dashboard: React.FC = () => {
-  const menu = useContext(MenuContext);
-  const { selectedMenu } = menu;
-
+  const { selectedMenu } = useContext(MenuContext) ?? {};
+  const id = useMemo(() => selectedMenu?.id ?? null, [selectedMenu]);
   return (
-    <main className="flex flex-col  max-sm:flex-col w-full">
-      <ReturnInfo id={selectedMenu?.id ?? null} />
+    <main className="flex flex-col max-sm:flex-col w-full">
+      <ReturnInfo id={id} />
     </main>
   );
 };
+
+const ReturnInfo = memo(
+  ({ id }: { id: string | number | null }) => {
+    switch (id) {
+      case null:
+      case undefined:
+        return <WelcomeMessage />;
+      case 9999:
+        return <PowerControl />;
+      default:
+        return <Cards id={id} />;
+    }
+  },
+  (prevProps, nextProps) => prevProps.id === nextProps.id
+);
 
 export default Dashboard;

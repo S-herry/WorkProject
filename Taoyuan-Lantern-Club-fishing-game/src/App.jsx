@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Index, { fetchAllData, loadChineseFont } from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Test from "./pages/Test";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -15,6 +16,15 @@ const App = () => {
           path: "/web/:id",
           element: <Index />,
           loader: fetchAllData,
+        },
+        {
+          path: "/area/:id",
+          element: <Index />,
+          loader: fetchAllData,
+        },
+        {
+          path: "/test",
+          element: <Test />,
         },
       ],
     },

@@ -5,8 +5,8 @@ const MenuContext = createContext<{
   showMenu: boolean;
   menuItems: Menu[] | null;
   selectedMenu: Menu | null;
-  SetSelectedItem: (item: Menu) => void;
   SetShowMenu: () => void;
+  SetSelectedItem: (item: Menu) => void;
   GetCurrentMenu: (id: number) => void;
 }>({
   showMenu: true,

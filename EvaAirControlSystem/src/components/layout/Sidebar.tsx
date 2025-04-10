@@ -16,8 +16,8 @@ const Sidebar: React.FC = () => {
     <>
       <aside
         className={clsx(
-          "fixed left-0 top-0 z-50 h-screen w-[345px] md:w-[300px] flex flex-col border-r border-gray-50/20 bg-MineBgColor",
-          { visible: showMenu, "max-sm:hidden": !showMenu }
+          "fixed left-0 top-0 z-50 h-screen w-[345px] lg:w-[300px] flex flex-col border-r border-gray-50/20 bg-MineBgColor",
+          showMenu ? " visible" : " max-xl:hidden"
         )}
       >
         <div className="px-14 py-10">
@@ -77,11 +77,11 @@ const Sidebar: React.FC = () => {
         </div>
       </aside>
 
-      {/* 遮罩層 (僅在手機模式顯示) */}
+      {/* 遮罩層 (僅在平板以下模式顯示) */}
       {showMenu && (
         <div
           onClick={() => SetShowMenu()}
-          className="fixed inset-0 bg-black/80 sm:hidden z-20"
+          className="fixed inset-0 bg-black/80 xl:hidden z-20"
         ></div>
       )}
     </>

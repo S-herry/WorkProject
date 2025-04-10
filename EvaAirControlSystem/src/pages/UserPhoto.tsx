@@ -10,7 +10,7 @@ const UserPhoto = () => {
 
   useEffect(() => {
     submit(null, { method: "post" });
-  }, []);
+  }, [submit]);
 
   useEffect(() => {
     if (data && data.url) {
@@ -45,15 +45,6 @@ const UserPhoto = () => {
         </figure>
         <div className="card-body items-center bg-MineBgColor ">
           <h2 className="card-title text-white">長按壓下載即可下載圖片</h2>
-          {/* <div className="card-actions justify-end">
-            <a
-              href={imageUrl}
-              className="btn btn-primary"
-              onClick={handleDownload}
-            >
-              常案
-            </a>
-          </div> */}
         </div>
       </div>
     </main>
@@ -62,8 +53,8 @@ const UserPhoto = () => {
 
 export async function Action({ params }: ActionFunctionArgs) {
   const id = params.id;
-  const test = url.test ? url.host : "";
-  const path = test + url.port.image;
+  const host = url.test ? url.host : "";
+  const path = host + url.port.image;
   const image = await fetch(path, {
     method: "POST",
     body: JSON.stringify({ id }),

@@ -3,11 +3,12 @@ import Button from "../common/Button";
 import Image from "../common/Image";
 interface VideoControlBtn {
   hasRecords: boolean;
-  id: string | number;
+  id: number;
   handleSubmit: (
-    id: string | number,
-    control: number | string,
-    type?: string
+    id: number,
+    control: string,
+    type?: string,
+    video?: number
   ) => void;
   type?: string;
   isActive: boolean;
@@ -25,17 +26,14 @@ const VideoControlButton = memo(function VideoControlButton({
   return (
     <div className="w-full z-10 flex justify-end gap-2">
       {[
-        [0, "2X"],
-        [3, "1X"],
-        [1, "stop"],
-        [2, "play"],
-        [5, "volume-up"],
-        [6, "volume-down"],
+        ["0", "2X"],
+        ["1", "stop"],
+        ["2", "play"],
       ].map(([control, label]) => (
         <Button
           key={control}
           color="bg-red-400 hover:bg-red-400 z-10 "
-          onClick={() => handleSubmit(id, control, type)}
+          onClick={() => handleSubmit(id, control, type, -1)}
           disabled={hasRecords ? !isActive : false}
         >
           <Image

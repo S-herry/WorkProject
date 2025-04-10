@@ -14,12 +14,12 @@ const Header: React.FC = () => {
   const { language, SetLanguage } = machine;
   return (
     <>
-      <header className="my-10 absolute top-0  pl-[21.5rem] max-sm:pl-0 w-full ">
-        <div className="flex justify-between items-center me-8 ">
+      <header className="my-10  ">
+        <div className="flex justify-between items-center me-8  w-full">
           <button
             onClick={SetShowMenu}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 "
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg xl:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 "
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
             <br />
             <span>{t("Dashboard")}</span>
           </h1>
-          <div className="flex  gap-5">
+          <div className="flex  gap-5 ">
             <LanguageToggle language={language} setLanguage={SetLanguage} />
             <Button
               size="md"

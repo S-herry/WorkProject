@@ -70,8 +70,8 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
   const { data } = useQuery({
     queryKey: ["menus"],
     queryFn: async ({ signal }) => {
-      const test = url.test ? url.host : "";
-      const path = test + url.port.menu;
+      const host = url.test ? url.host : "";
+      const path = host + url.port.menu;
       if (!path) return [];
 
       const result = await fetchInformationCard({ url: path, signal });

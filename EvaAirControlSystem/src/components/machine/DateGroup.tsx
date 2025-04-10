@@ -6,10 +6,11 @@ import machineContext from "../store/Machine-Context";
 import { useTranslation } from "react-i18next";
 interface DateGroupProps {
   title: string;
-  id?: number | string;
+  id?: number;
   subItems?: Json_Menus;
   json_key: string;
   current_stage?: Stage;
+  SetCurrent_stage: ({ id, room, category, data }: Stage) => void;
 }
 
 function DateGroup({
@@ -17,6 +18,7 @@ function DateGroup({
   subItems,
   json_key,
   current_stage,
+  SetCurrent_stage,
 }: DateGroupProps) {
   const machine = useContext(machineContext);
   const { language } = machine;
@@ -56,6 +58,7 @@ function DateGroup({
               activeId={activeId}
               setActiveId={setActiveId}
               current_stage={current_stage}
+              SetCurrent_stage={SetCurrent_stage}
             />
           );
         })}

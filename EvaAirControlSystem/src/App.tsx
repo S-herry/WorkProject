@@ -24,17 +24,18 @@ function App() {
         </MachineProvider>
       ),
       errorElement: <RootErrorPages />,
-      // loader: LoginState,
+      loader: LoginState,
       children: [
         {
           path: "/",
+          action: machineAction,
           element: <Dashboard />,
         },
         {
           path: "/machine_control/:id",
           element: <MachineContent />,
-          loader: Loader,
           action: machineAction,
+          loader: Loader,
         },
       ],
     },
